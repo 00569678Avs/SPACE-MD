@@ -1,25 +1,33 @@
-name: Deploy SPACE-MD
+name: Node.js CI
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [20.x]
+
     steps:
-    - name: Checkout repo
+    - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Setup Node.js
+    - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: 20.x
+        node-version: ${{ matrix.node-version }}
 
     - name: Install dependencies
       run: npm install
 
-    - name: Run Bot
-      env:
-        SESSION_ID: ${{ secrets.SESSION_ID }}
-      run: node
+    - name: Start application
+      run: npm start
